@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake Detection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #007bff;
+        }
+
+        .result, .extracted-frames {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: rgba(245, 245, 245, 0.9); 
+        }
+
+        .frame {
+            margin-top: 10px;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Deepfake Detection</h1>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="file" name="file" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Upload</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h4>Prediction: {{ result }}</h4>
+            <p>Confidence: {{ confidence }}</p>
+            <p>{{ explanation }}</p>
+            {% if processed_image %}
+            <img src="{{ url_for('processed_image', filename=filename) }}" alt="Processed Image">
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if extracted_frames %}
+        <div class="extracted-frames">
+            <h4>Extracted Frames:</h4>
+            {% for frame in extracted_frames %}
+            <div class="frame">
+                <img src="{{ url_for('extracted_frame', filename=frame.split('/')[-1]) }}" alt="Extracted Frame">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
